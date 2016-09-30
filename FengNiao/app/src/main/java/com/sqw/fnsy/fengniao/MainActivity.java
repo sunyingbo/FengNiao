@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
 
-    private RadioGroup radioGroup;
+    private RadioGroup radioGroup = null;
 
     private FragmentManager fragmentManager = null;
     private FragmentTransaction fragmentTransaction = null;
