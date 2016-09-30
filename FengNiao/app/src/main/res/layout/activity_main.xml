@@ -9,6 +9,7 @@
     tools:context="com.sqw.fnsy.fengniao.MainActivity">
 
     <FrameLayout
+        android:id="@+id/frame_mainactivity"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -24,18 +25,22 @@
         android:orientation="horizontal">
 
         <RadioButton
+            android:id="@+id/rb_mainactivity_zixun"
             android:drawableTop="@drawable/rb_zixun_selector"
-            style="@style/RadioButton_Main" />
+            style="@style/RadioButton_Main"/>
 
         <RadioButton
+            android:id="@+id/rb_mainactivity_tushang"
             android:drawableTop="@drawable/rb_tushang_selector"
             style="@style/RadioButton_Main" />
 
         <RadioButton
+            android:id="@+id/rb_mainactivity_luntan"
             android:drawableTop="@drawable/rb_luntan_selector"
             style="@style/RadioButton_Main" />
 
         <RadioButton
+            android:id="@+id/rb_mainactivity_wode"
             android:drawableTop="@drawable/rb_wode_selector"
             style="@style/RadioButton_Main" />
 
