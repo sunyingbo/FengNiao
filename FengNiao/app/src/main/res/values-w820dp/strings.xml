@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="data_empty">没有数据或者请求失败，点击重试</string>
+</resources>

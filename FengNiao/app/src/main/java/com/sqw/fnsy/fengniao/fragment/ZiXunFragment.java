@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.sqw.fnsy.fengniao.R;
 import com.sqw.fnsy.fengniao.adapter.MyFragmentPagerAdapter;
-import com.sqw.fnsy.fengniao.fragment.zixun.ZXChildrenFragment;
+import com.sqw.fnsy.fengniao.fragment.zixun.ZxChildrenFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class ZiXunFragment extends Fragment {
     private void initTab(View view) {
         tabLayout = (TabLayout) view.findViewById(R.id.tab_fragment_zixun);
         tabs = new ArrayList<String>();
-        tabs.add("头条");
+        tabs.add("精选");
         tabs.add("器材");
         tabs.add("影像");
         tabs.add("学院");
@@ -66,7 +66,7 @@ public class ZiXunFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager_fragment_zixun);
         fragments = new ArrayList<Fragment>();
         for (int i = 0; i < tabs.size(); i++) {
-            ZXChildrenFragment fragment = new ZXChildrenFragment();
+            ZxChildrenFragment fragment = new ZxChildrenFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("index", i);
             fragment.setArguments(bundle);
