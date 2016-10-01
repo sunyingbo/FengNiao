@@ -2,14 +2,16 @@ package com.sqw.fnsy.fengniao.fragment.zixun;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -23,7 +25,8 @@ import com.sqw.fnsy.fengniao.adapter.MyViewPagerAdapter;
 import com.sqw.fnsy.fengniao.bean.Choiceness;
 import com.sqw.fnsy.fengniao.bean.ZxHeaderBean;
 import com.sqw.fnsy.fengniao.config.PathAPI;
-import com.sqw.fnsy.fengniao.utils.ImageLoader;
+import com.sqw.fnsy.fengniao.listener.MyPageChangeListener;
+import com.sqw.fnsy.fengniao.utils.AddDotsUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -35,7 +38,7 @@ import okhttp3.Call;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ZxChildrenFragment extends Fragment {
+public class ZxChildrenFragment extends Fragment implements Handler.Callback {
 
     private String url = "";
     private String urlHeader = "";
@@ -46,10 +49,14 @@ public class ZxChildrenFragment extends Fragment {
     private MyListViewAdapter myListViewAdapter = null;
 
     private ViewPager vpHeader = null;
+    private LinearLayout linearLayout = null;
     private List<ZxHeaderBean> headerList = null;
     private List<String> picUrls = null;
     private List<ImageView> imgHeaderList = null;
     private MyViewPagerAdapter myViewPagerAdapter = null;
+
+    private Handler myHandler = null;
+    private int pageNoHeader = 0;
 
     public ZxChildrenFragment() {
         // Required empty public constructor
@@ -68,14 +75,13 @@ public class ZxChildrenFragment extends Fragment {
         headerList = new ArrayList<ZxHeaderBean>();
         picUrls = new ArrayList<String>();
         imgHeaderList = new ArrayList<ImageView>();
-        ImageLoader.init(getActivity());
+        myHandler = new Handler(this);
         switch (index) {
             case 0:
                 urlHeader = PathAPI.getChoicenessHeader();
                 url = PathAPI.getChoiceness();
                 getData(url);
                 getImageUrls(urlHeader);
-
                 break;
             case 1:
                 break;
@@ -92,8 +98,6 @@ public class ZxChildrenFragment extends Fragment {
             case 7:
                 break;
         }
-
-
         myListViewAdapter = new MyListViewAdapter(getActivity(), totalList);
         listView.setAdapter(myListViewAdapter);
         return view;
@@ -102,22 +106,30 @@ public class ZxChildrenFragment extends Fragment {
     private void addHeaderView() {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.header_viewpager_zx, null);
         vpHeader = (ViewPager) view.findViewById(R.id.header_listview_zx);
+        linearLayout = (LinearLayout) view.findViewById(R.id.linearLayout_header_zx);
         for (int i = 0; i < headerList.size(); i++) {
             String pic_src = headerList.get(i).getPic_src();
             picUrls.add(pic_src);
         }
         for (int i = 0; i < picUrls.size() * 2; i++) {
             ImageView imageView = new ImageView(getActivity());
-//            Picasso.with(getActivity()).load(headerList.get(i % headerList.size()).getPic_src())
-//                    .placeholder(R.mipmap.ic_launcher)
-//                    .error(R.mipmap.ic_launcher)
-//                    .into(imageView);
-            ImageLoader.display(imageView, picUrls.get(i % picUrls.size()));
+            Picasso.with(getActivity()).load(headerList.get(i % headerList.size()).getPic_src())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .into(imageView);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imgHeaderList.add(imageView);
         }
+        AddDotsUtil.addDot(getActivity(), linearLayout, picUrls.size());
         myViewPagerAdapter = new MyViewPagerAdapter(imgHeaderList);
         vpHeader.setAdapter(myViewPagerAdapter);
+        vpHeader.setOnPageChangeListener(new MyPageChangeListener(linearLayout, linearLayout.getChildCount()));
         listView.addHeaderView(view);
+        autoScroll();
+    }
+
+    private void autoScroll() {
+        myHandler.sendEmptyMessageDelayed(0, 3000);
     }
 
     private void getImageUrls(String url) {
@@ -150,6 +162,7 @@ public class ZxChildrenFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 if (!TextUtils.isEmpty(response)) {
+                    relativeLayout.setVisibility(View.GONE);
                     JSONObject jsonObject = JSON.parseObject(response);
                     JSONArray list1 = jsonObject.getJSONArray("160120");
                     List<Choiceness> choicenesses = JSON.parseArray(list1.toJSONString(), Choiceness.class);
@@ -161,10 +174,15 @@ public class ZxChildrenFragment extends Fragment {
                     choicenesses.add(choiceness);
                     totalList.addAll(choicenesses);
                     myListViewAdapter.notifyDataSetChanged();
-                    relativeLayout.setVisibility(View.GONE);
                 }
             }
         });
     }
 
+    @Override
+    public boolean handleMessage(Message msg) {
+        vpHeader.setCurrentItem(pageNoHeader++);
+        myHandler.sendEmptyMessageDelayed(0, 3000);
+        return false;
+    }
 }
