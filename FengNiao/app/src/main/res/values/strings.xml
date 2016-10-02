@@ -6,5 +6,11 @@
     <string name="data_empty">没有数据或者请求失败，点击重试</string>
     <string name="load_more">加载更多</string>
 
+    <!-- 下拉刷新 -->
+    <string name="pull_to_refresh_pull_label">下拉刷新</string>
+    <string name="pull_to_refresh_release_label">释放立即刷新</string>
+    <string name="pull_to_refresh_refreshing_label">正在刷新</string>
+    <string name="pull_to_refresh_tap_label">点击刷新</string>
+
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

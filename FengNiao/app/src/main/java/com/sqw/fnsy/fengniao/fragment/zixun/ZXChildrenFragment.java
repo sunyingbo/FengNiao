@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -29,6 +28,8 @@ import com.sqw.fnsy.fengniao.bean.ZiXunBean;
 import com.sqw.fnsy.fengniao.bean.ZxHeaderBean;
 import com.sqw.fnsy.fengniao.config.PathAPI;
 import com.sqw.fnsy.fengniao.listener.MyPageChangeListener;
+import com.sqw.fnsy.fengniao.pulltorefresh.PullToRefreshBase;
+import com.sqw.fnsy.fengniao.pulltorefresh.PullToRefreshListView;
 import com.sqw.fnsy.fengniao.utils.AddDotsUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -47,6 +48,7 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
     private String urlHeader = PathAPI.getChoicenessHeader();
 
     private RelativeLayout relativeLayout = null;
+    private PullToRefreshListView pullToRefreshListView = null;
     private ListView listView = null;
     private List<ZiXunBean> totalList = null;
     private MyListViewAdapter myListViewAdapter = null;
@@ -60,6 +62,8 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
 
     private Handler myHandler = null;
     private int pageNoHeader = 0;
+    private int pageNo = 1;
+    private int type = -1;
 
     public ZxChildrenFragment() {
         // Required empty public constructor
@@ -73,13 +77,14 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
         int index = getArguments().getInt("index");
         View view = inflater.inflate(R.layout.fragment_zxchildren, container, false);
         relativeLayout = (RelativeLayout) view.findViewById(R.id.data_empty);
-        listView = (ListView) view.findViewById(R.id.listview_fragmentzxchildren);
+//        listView = (ListView) view.findViewById(R.id.listview_fragmentzxchildren);
+        pullToRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview_fragmentzxchildren);
+        listView = pullToRefreshListView.getRefreshableView();
         totalList = new ArrayList<ZiXunBean>();
         headerList = new ArrayList<ZxHeaderBean>();
         picUrls = new ArrayList<String>();
         imgHeaderList = new ArrayList<ImageView>();
         myHandler = new Handler(this);
-        int type = -1;
         switch (index) {
             case 0:
                 urlHeader = PathAPI.getChoicenessHeader();
@@ -112,27 +117,46 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
                 break;
         }
         if (index == 0) {
-            getChoicenessData(1);
+            getChoicenessData(pageNo);
         } else {
-            getData(1);
+            getData(pageNo);
         }
         getImageUrls();
         myListViewAdapter = new MyListViewAdapter(getActivity(), totalList, type);
         addFooterView();
         listView.setAdapter(myListViewAdapter);
-        listView.setOnScrollListener(new MyOnScrollListener(type));
+        pullToRefreshListView.setOnRefreshListener(new MyOnRefreshListener());
+        listView.setOnScrollListener(new MyOnScrollListener());
         return view;
+    }
+
+    private final class MyOnRefreshListener implements PullToRefreshBase.OnRefreshListener {
+
+        @Override
+        public void onRefresh() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    totalList.clear();
+                    if (type == 0) {
+                        getChoicenessData(pageNo);
+                    } else {
+                        getData(pageNo);
+                    }
+                    myHandler.sendEmptyMessage(1);
+                }
+            }).start();
+        }
     }
 
     private final class MyOnScrollListener implements AbsListView.OnScrollListener {
 
         private boolean isBottom = false;
-        private int pageNo = 1;
-        private int type;
-
-        public MyOnScrollListener(int type) {
-            this.type = type;
-        }
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -258,8 +282,16 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
 
     @Override
     public boolean handleMessage(Message msg) {
-        vpHeader.setCurrentItem(pageNoHeader++);
-        myHandler.sendEmptyMessageDelayed(0, 3000);
+        switch (msg.what) {
+            case 0:
+                vpHeader.setCurrentItem(pageNoHeader++);
+                myHandler.sendEmptyMessageDelayed(0, 3000);
+                break;
+            case 1:
+                myListViewAdapter.notifyDataSetChanged();
+                pullToRefreshListView.onRefreshComplete();
+                break;
+        }
         return false;
     }
 }
