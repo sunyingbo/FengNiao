@@ -31,6 +31,10 @@ public class MyViewPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+        ViewGroup parent = (ViewGroup) listImages.get(position % listImages.size()).getParent();
+        if (parent != null) {
+            parent.removeAllViewsInLayout();
+        }
         container.addView(listImages.get(position % listImages.size()));
         return listImages.get(position % listImages.size());
     }

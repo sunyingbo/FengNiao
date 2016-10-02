@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.sqw.fnsy.fengniao.R;
 import com.sqw.fnsy.fengniao.bean.Choiceness;
+import com.sqw.fnsy.fengniao.bean.ZiXunBean;
 
 import java.util.List;
 
@@ -21,11 +22,13 @@ import java.util.List;
 public class MyListViewAdapter extends BaseAdapter {
 
     private Context context = null;
-    private List<Choiceness> totalList = null;
+    private List<ZiXunBean> totalList = null;
+    private int type;
 
-    public MyListViewAdapter(Context context, List<Choiceness> totalList) {
+    public MyListViewAdapter(Context context, List<ZiXunBean> totalList, int type) {
         this.context = context;
         this.totalList = totalList;
+        this.type = type;
     }
 
     @Override
@@ -58,15 +61,25 @@ public class MyListViewAdapter extends BaseAdapter {
             myViewHolder = (MyViewHolder) convertView.getTag();
         }
 
-        Choiceness choiceness = totalList.get(position);
+        if (type == 0) {
+            Choiceness choiceness = (Choiceness) totalList.get(position);
+            Picasso.with(context).load(choiceness.getPic_url())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .into(myViewHolder.img);
+            myViewHolder.tvTitle.setText(choiceness.getTitle());
+            myViewHolder.tvDate.setText(choiceness.getDate());
+            myViewHolder.tvPingLun.setText(choiceness.getComments_num() + " 评论");
+        } else {
+            ZiXunBean ziXunBean = totalList.get(position);
+            Picasso.with(context).load(ziXunBean.getPic_url())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .into(myViewHolder.img);
+            myViewHolder.tvTitle.setText(ziXunBean.getTitle());
+            myViewHolder.tvPingLun.setText(ziXunBean.getComments_num() + " 评论");
+        }
 
-        Picasso.with(context).load(choiceness.getPic_url())
-                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
-                .into(myViewHolder.img);
-        myViewHolder.tvTitle.setText(choiceness.getTitle());
-        myViewHolder.tvDate.setText(choiceness.getDate());
-        myViewHolder.tvPingLun.setText(choiceness.getComments_num() + " 评论");
 
         return convertView;
     }

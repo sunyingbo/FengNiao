@@ -12,7 +12,7 @@ public class PathAPI {
     }
 
     public static String getChoiceness() {
-        return "http://api.fengniao.com/app_ipad/news_jingxuan.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&page=1";
+        return "http://api.fengniao.com/app_ipad/news_jingxuan.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&page=";
     }
 
     // 器材
@@ -21,7 +21,7 @@ public class PathAPI {
     }
 
     public static String getEquipment() {
-        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=296&page=1";
+        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=296&page=";
     }
 
     // 影像
@@ -30,7 +30,7 @@ public class PathAPI {
     }
 
     public static String getBlip() {
-        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=192&page=1";
+        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=192&page=";
     }
 
     // 学院
@@ -39,7 +39,7 @@ public class PathAPI {
     }
 
     public static String getCollege() {
-        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=190&page=1";
+        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=190&page=";
     }
 
     // 旅游
@@ -48,7 +48,7 @@ public class PathAPI {
     }
 
     public static String getTravel() {
-        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=278&page=1";
+        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=278&page=";
     }
 
     // 汽车
@@ -57,7 +57,7 @@ public class PathAPI {
     }
 
     public static String getCar() {
-        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=305&page=1";
+        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=305&page=";
     }
 
     // 手机
@@ -66,7 +66,7 @@ public class PathAPI {
     }
 
     public static String getCellphone() {
-        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=340&page=1";
+        return "http://api.fengniao.com/app_ipad/news_list.php?appImei=99000505856649&osType=Android&osVersion=4.1.1&cid=340&page=";
     }
 
 }

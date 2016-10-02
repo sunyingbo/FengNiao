@@ -10,10 +10,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -23,6 +25,7 @@ import com.sqw.fnsy.fengniao.R;
 import com.sqw.fnsy.fengniao.adapter.MyListViewAdapter;
 import com.sqw.fnsy.fengniao.adapter.MyViewPagerAdapter;
 import com.sqw.fnsy.fengniao.bean.Choiceness;
+import com.sqw.fnsy.fengniao.bean.ZiXunBean;
 import com.sqw.fnsy.fengniao.bean.ZxHeaderBean;
 import com.sqw.fnsy.fengniao.config.PathAPI;
 import com.sqw.fnsy.fengniao.listener.MyPageChangeListener;
@@ -40,12 +43,12 @@ import okhttp3.Call;
  */
 public class ZxChildrenFragment extends Fragment implements Handler.Callback {
 
-    private String url = "";
-    private String urlHeader = "";
+    private String url = PathAPI.getChoiceness();
+    private String urlHeader = PathAPI.getChoicenessHeader();
 
     private RelativeLayout relativeLayout = null;
     private ListView listView = null;
-    private List<Choiceness> totalList = null;
+    private List<ZiXunBean> totalList = null;
     private MyListViewAdapter myListViewAdapter = null;
 
     private ViewPager vpHeader = null;
@@ -71,36 +74,89 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
         View view = inflater.inflate(R.layout.fragment_zxchildren, container, false);
         relativeLayout = (RelativeLayout) view.findViewById(R.id.data_empty);
         listView = (ListView) view.findViewById(R.id.listview_fragmentzxchildren);
-        totalList = new ArrayList<Choiceness>();
+        totalList = new ArrayList<ZiXunBean>();
         headerList = new ArrayList<ZxHeaderBean>();
         picUrls = new ArrayList<String>();
         imgHeaderList = new ArrayList<ImageView>();
         myHandler = new Handler(this);
+        int type = -1;
         switch (index) {
             case 0:
                 urlHeader = PathAPI.getChoicenessHeader();
                 url = PathAPI.getChoiceness();
-                getData(url);
-                getImageUrls(urlHeader);
+                type = 0;
                 break;
             case 1:
+                urlHeader = PathAPI.getEquipmentHeader();
+                url = PathAPI.getEquipment();
                 break;
             case 2:
+                urlHeader = PathAPI.getBlipHeader();
+                url = PathAPI.getBlip();
                 break;
             case 3:
+                urlHeader = PathAPI.getCollegeHeader();
+                url = PathAPI.getCollege();
                 break;
             case 4:
+                urlHeader = PathAPI.getTravelHeader();
+                url = PathAPI.getTravel();
                 break;
             case 5:
+                urlHeader = PathAPI.getCarHeader();
+                url = PathAPI.getCar();
                 break;
             case 6:
-                break;
-            case 7:
+                urlHeader = PathAPI.getCellphoneHeader();
+                url = PathAPI.getCellphone();
                 break;
         }
-        myListViewAdapter = new MyListViewAdapter(getActivity(), totalList);
+        if (index == 0) {
+            getChoicenessData(1);
+        } else {
+            getData(1);
+        }
+        getImageUrls();
+        myListViewAdapter = new MyListViewAdapter(getActivity(), totalList, type);
+        addFooterView();
         listView.setAdapter(myListViewAdapter);
+        listView.setOnScrollListener(new MyOnScrollListener(type));
         return view;
+    }
+
+    private final class MyOnScrollListener implements AbsListView.OnScrollListener {
+
+        private boolean isBottom = false;
+        private int pageNo = 1;
+        private int type;
+
+        public MyOnScrollListener(int type) {
+            this.type = type;
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if (scrollState == SCROLL_STATE_IDLE) {
+                if (isBottom) {
+                    pageNo++;
+                    if (type == 0) {
+                        getChoicenessData(pageNo);
+                    } else {
+                        getData(pageNo);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            isBottom = (firstVisibleItem + visibleItemCount == totalItemCount);
+        }
+    }
+
+    private void addFooterView() {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.footer_loadmore, null);
+        listView.addFooterView(view);
     }
 
     private void addHeaderView() {
@@ -123,6 +179,7 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
         AddDotsUtil.addDot(getActivity(), linearLayout, picUrls.size());
         myViewPagerAdapter = new MyViewPagerAdapter(imgHeaderList);
         vpHeader.setAdapter(myViewPagerAdapter);
+        vpHeader.setCurrentItem(0);
         vpHeader.setOnPageChangeListener(new MyPageChangeListener(linearLayout, linearLayout.getChildCount()));
         listView.addHeaderView(view);
         autoScroll();
@@ -132,8 +189,8 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
         myHandler.sendEmptyMessageDelayed(0, 3000);
     }
 
-    private void getImageUrls(String url) {
-        OkHttpUtils.get().url(url).build().execute(new StringCallback() {
+    private void getImageUrls() {
+        OkHttpUtils.get().url(urlHeader).build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e) {
 
@@ -152,8 +209,8 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
         });
     }
 
-    private void getData(String url) {
-        OkHttpUtils.get().url(url).build().execute(new StringCallback() {
+    private void getChoicenessData(int page) {
+        OkHttpUtils.get().url(url + page).build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e) {
                 relativeLayout.setVisibility(View.VISIBLE);
@@ -173,6 +230,26 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
                     Choiceness choiceness = JSON.parseObject(obj.toJSONString(), Choiceness.class);
                     choicenesses.add(choiceness);
                     totalList.addAll(choicenesses);
+                    myListViewAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
+
+    private void getData(int page) {
+        OkHttpUtils.get().url(url + page).build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(String response) {
+                if (!TextUtils.isEmpty(response)) {
+                    JSONObject jsonObject = JSON.parseObject(response);
+                    JSONArray list = jsonObject.getJSONArray("list");
+                    List<ZiXunBean> ziXunBeanList = JSON.parseArray(list.toJSONString(), ZiXunBean.class);
+                    totalList.addAll(ziXunBeanList);
                     myListViewAdapter.notifyDataSetChanged();
                 }
             }

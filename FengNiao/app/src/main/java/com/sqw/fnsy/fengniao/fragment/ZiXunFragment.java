@@ -51,7 +51,7 @@ public class ZiXunFragment extends Fragment {
         tabs.add("器材");
         tabs.add("影像");
         tabs.add("学院");
-        tabs.add("课堂");
+//        tabs.add("课堂");
         tabs.add("旅游");
         tabs.add("汽车");
         tabs.add("手机");
