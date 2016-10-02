@@ -14,11 +14,4 @@
 
     </com.sqw.fnsy.fengniao.pulltorefresh.PullToRefreshListView>
 
-    <!--<ListView-->
-        <!--android:id="@+id/listview_fragmentzxchildren"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-    <!--</ListView>-->
-
 </FrameLayout>

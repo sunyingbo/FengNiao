@@ -1,10 +1,12 @@
 package com.sqw.fnsy.fengniao.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by SUN on 2016/10/2.
  */
 
-public class ZiXunBean {
+public class ZiXunBean implements Serializable {
 
     /**
      * title : 大疆Mavic Pro中国媒体体验会在京举行

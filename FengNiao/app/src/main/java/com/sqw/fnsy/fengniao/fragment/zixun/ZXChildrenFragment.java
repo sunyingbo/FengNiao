@@ -1,6 +1,7 @@
 package com.sqw.fnsy.fengniao.fragment.zixun;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,16 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.squareup.picasso.Picasso;
 import com.sqw.fnsy.fengniao.R;
+import com.sqw.fnsy.fengniao.activity.ZxChildrenActivity;
 import com.sqw.fnsy.fengniao.adapter.MyListViewAdapter;
 import com.sqw.fnsy.fengniao.adapter.MyViewPagerAdapter;
 import com.sqw.fnsy.fengniao.bean.Choiceness;
@@ -64,6 +68,7 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
     private int pageNoHeader = 0;
     private int pageNo = 1;
     private int type = -1;
+    private String title = "";
 
     public ZxChildrenFragment() {
         // Required empty public constructor
@@ -74,10 +79,14 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        int index = getArguments().getInt("index");
         View view = inflater.inflate(R.layout.fragment_zxchildren, container, false);
+        initView(view);
+        return view;
+    }
+
+    private void initView(View view) {
+        int index = getArguments().getInt("index");
         relativeLayout = (RelativeLayout) view.findViewById(R.id.data_empty);
-//        listView = (ListView) view.findViewById(R.id.listview_fragmentzxchildren);
         pullToRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview_fragmentzxchildren);
         listView = pullToRefreshListView.getRefreshableView();
         totalList = new ArrayList<ZiXunBean>();
@@ -90,30 +99,37 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
                 urlHeader = PathAPI.getChoicenessHeader();
                 url = PathAPI.getChoiceness();
                 type = 0;
+                title = "精选资讯";
                 break;
             case 1:
                 urlHeader = PathAPI.getEquipmentHeader();
                 url = PathAPI.getEquipment();
+                title = "器材资讯";
                 break;
             case 2:
                 urlHeader = PathAPI.getBlipHeader();
                 url = PathAPI.getBlip();
+                title = "影像资讯";
                 break;
             case 3:
                 urlHeader = PathAPI.getCollegeHeader();
                 url = PathAPI.getCollege();
+                title = "学院资讯";
                 break;
             case 4:
                 urlHeader = PathAPI.getTravelHeader();
                 url = PathAPI.getTravel();
+                title = "旅游资讯";
                 break;
             case 5:
                 urlHeader = PathAPI.getCarHeader();
                 url = PathAPI.getCar();
+                title = "汽车资讯";
                 break;
             case 6:
                 urlHeader = PathAPI.getCellphoneHeader();
                 url = PathAPI.getCellphone();
+                title = "手机资讯";
                 break;
         }
         if (index == 0) {
@@ -126,8 +142,22 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
         addFooterView();
         listView.setAdapter(myListViewAdapter);
         pullToRefreshListView.setOnRefreshListener(new MyOnRefreshListener());
+        listView.setOnItemClickListener(new MyOnItemClickListener());
         listView.setOnScrollListener(new MyOnScrollListener());
-        return view;
+    }
+
+    private final class MyOnItemClickListener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            ZiXunBean ziXunBean = totalList.get(position - 1);
+            Intent intent = new Intent(getActivity(), ZxChildrenActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("title", title);
+            bundle.putSerializable("key", ziXunBean);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
     private final class MyOnRefreshListener implements PullToRefreshBase.OnRefreshListener {
@@ -238,6 +268,7 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
             @Override
             public void onError(Call call, Exception e) {
                 relativeLayout.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
             }
 
             @Override
