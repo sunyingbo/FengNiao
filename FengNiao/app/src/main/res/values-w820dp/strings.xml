@@ -2,4 +2,5 @@
 <resources>
     <string name="data_empty">没有数据或者请求失败，点击重试</string>
     <string name="load_mre">加载更多</string>
+    <string name="search">搜索</string>
 </resources>

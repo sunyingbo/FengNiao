@@ -1,9 +1,16 @@
 package com.sqw.fnsy.fengniao.adapter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.sqw.fnsy.fengniao.activity.ZxChildrenActivity;
+import com.sqw.fnsy.fengniao.bean.ZxHeaderBean;
+import com.sqw.fnsy.fengniao.inter.MyOnClick;
 
 import java.util.List;
 
@@ -29,12 +36,28 @@ public class MyViewPagerAdapter extends PagerAdapter {
         return view == object;
     }
 
+    private MyOnClick myOnClick = null;
+
+    public void setOnClick(MyOnClick myOnClick) {
+        this.myOnClick = myOnClick;
+    }
+
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
         ViewGroup parent = (ViewGroup) listImages.get(position % listImages.size()).getParent();
         if (parent != null) {
             parent.removeAllViewsInLayout();
         }
+        View view = listImages.get(position % listImages.size());
+        view.setOnClickListener(new View.OnClickListener() {
+
+            int pos = position;
+
+            @Override
+            public void onClick(View v) {
+                myOnClick.onClick(pos);
+            }
+        });
         container.addView(listImages.get(position % listImages.size()));
         return listImages.get(position % listImages.size());
     }

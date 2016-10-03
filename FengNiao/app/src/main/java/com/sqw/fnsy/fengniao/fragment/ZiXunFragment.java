@@ -1,6 +1,7 @@
 package com.sqw.fnsy.fengniao.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -8,8 +9,10 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.sqw.fnsy.fengniao.R;
+import com.sqw.fnsy.fengniao.activity.SearchActivity;
 import com.sqw.fnsy.fengniao.adapter.MyFragmentPagerAdapter;
 import com.sqw.fnsy.fengniao.fragment.zixun.ZxChildrenFragment;
 
@@ -19,7 +22,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ZiXunFragment extends Fragment {
+public class ZiXunFragment extends Fragment implements View.OnClickListener {
 
     public static final String TAG = ZiXunFragment.class.getName();
 
@@ -58,6 +61,8 @@ public class ZiXunFragment extends Fragment {
         for (int i = 0; i < tabs.size(); i++) {
             tabLayout.addTab(tabLayout.newTab().setText(tabs.get(i)));
         }
+        ImageView imageView = (ImageView) view.findViewById(R.id.img_titlebar_search);
+        imageView.setOnClickListener(this);
         initView(view);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -76,4 +81,9 @@ public class ZiXunFragment extends Fragment {
         viewPager.setAdapter(myFragmentPagerAdapter);
     }
 
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        startActivity(intent);
+    }
 }

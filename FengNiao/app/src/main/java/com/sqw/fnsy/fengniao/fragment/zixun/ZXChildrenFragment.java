@@ -31,6 +31,7 @@ import com.sqw.fnsy.fengniao.bean.Choiceness;
 import com.sqw.fnsy.fengniao.bean.ZiXunBean;
 import com.sqw.fnsy.fengniao.bean.ZxHeaderBean;
 import com.sqw.fnsy.fengniao.config.PathAPI;
+import com.sqw.fnsy.fengniao.inter.MyOnClick;
 import com.sqw.fnsy.fengniao.listener.MyPageChangeListener;
 import com.sqw.fnsy.fengniao.pulltorefresh.PullToRefreshBase;
 import com.sqw.fnsy.fengniao.pulltorefresh.PullToRefreshListView;
@@ -232,6 +233,18 @@ public class ZxChildrenFragment extends Fragment implements Handler.Callback {
         }
         AddDotsUtil.addDot(getActivity(), linearLayout, picUrls.size());
         myViewPagerAdapter = new MyViewPagerAdapter(imgHeaderList);
+        myViewPagerAdapter.setOnClick(new MyOnClick() {
+            @Override
+            public void onClick(int position) {
+                Intent intent = new Intent(getActivity(), ZxChildrenActivity.class);
+                Bundle bundle = new Bundle();
+                ZxHeaderBean zxHeaderBean = headerList.get(position % headerList.size());
+                bundle.putString("title", title);
+                bundle.putSerializable("key", zxHeaderBean);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
         vpHeader.setAdapter(myViewPagerAdapter);
         vpHeader.setCurrentItem(0);
         vpHeader.setOnPageChangeListener(new MyPageChangeListener(linearLayout, linearLayout.getChildCount()));

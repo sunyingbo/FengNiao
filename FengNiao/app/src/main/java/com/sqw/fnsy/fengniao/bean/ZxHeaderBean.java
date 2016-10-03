@@ -4,7 +4,7 @@ package com.sqw.fnsy.fengniao.bean;
  * Created by SUN on 2016/10/1.
  */
 
-public class ZxHeaderBean {
+public class ZxHeaderBean extends ZiXunBean {
 
     /**
      * type : doc
@@ -22,13 +22,8 @@ public class ZxHeaderBean {
 
     private String type;
     private String url;
-    private String title;
     private String pic_src;
     private String date;
-    private int comment_page_num;
-    private String comments_num;
-    private String more_comment_url;
-    private String web_url;
     private String doc_id;
     private String author;
 
@@ -46,14 +41,6 @@ public class ZxHeaderBean {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getPic_src() {

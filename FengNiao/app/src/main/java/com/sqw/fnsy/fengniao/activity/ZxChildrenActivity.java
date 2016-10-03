@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.sqw.fnsy.fengniao.R;
 import com.sqw.fnsy.fengniao.bean.ZiXunBean;
+import com.sqw.fnsy.fengniao.bean.ZxHeaderBean;
 
 public class ZxChildrenActivity extends AppCompatActivity {
 
@@ -21,7 +22,7 @@ public class ZxChildrenActivity extends AppCompatActivity {
     private WebView webView = null;
 
     private String title = null;
-    private String webUrl = null;
+    private String url = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,12 @@ public class ZxChildrenActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         title = bundle.getString("title");
         ZiXunBean ziXunBean = (ZiXunBean) bundle.getSerializable("key");
-        webUrl = ziXunBean.getDoc_url();
+        if (ziXunBean instanceof ZxHeaderBean) {
+            ZxHeaderBean zxHeaderBean = (ZxHeaderBean) ziXunBean;
+            url = zxHeaderBean.getUrl();
+        } else {
+            url = ziXunBean.getDoc_url();
+        }
     }
 
     private void initWebView() {
@@ -53,7 +59,7 @@ public class ZxChildrenActivity extends AppCompatActivity {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true);
-        webView.loadUrl(webUrl);
+        webView.loadUrl(url);
     }
 
     int times = 0;

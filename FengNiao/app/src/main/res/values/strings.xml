@@ -11,6 +11,7 @@
     <string name="pull_to_refresh_release_label">释放立即刷新</string>
     <string name="pull_to_refresh_refreshing_label">正在刷新</string>
     <string name="pull_to_refresh_tap_label">点击刷新</string>
+    <string name="search">搜索</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>
